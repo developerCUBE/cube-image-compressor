@@ -1,0 +1,293 @@
+/* CUBE design ("Cream and ink") – shared stylesheet, version 1.4 (19 Nov 2026)
+   The rules are in CUBE-DESIGN.md. Read that first.
+   Use: copy this file and the img folder into a project, then  <link rel="stylesheet" href="cube-design.css">
+   Font: add  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+   Light theme only. Colour means status: red = waiting for you, blue = on its way, yellow = sent back, green = approved. */
+
+:root {
+  /* paper */
+  --paper: #ece6d8; --side: #e6dfcf; --sheet: #f4efe3; --sheet-hi: #f9f5eb; --note: #fbf8f1;
+  /* ink for text and lines */
+  --ink: #25221c; --ink-2: #6c665a; --ink-3: #a29b8b;
+  --hair: rgba(37,34,28,.11); --hair-2: rgba(37,34,28,.2);
+  --wash: rgba(37,34,28,.055); --wash-2: rgba(37,34,28,.1);
+  /* the printed inks */
+  --red: #bf4f38; --blue: #35598f; --yellow: #d3a436; --yellow-d: #9a7216; --green: #55875f; --plum: #7a567f; --kraft: #cdbf9f;
+  --on-ink: #fbf7ec; --on-yellow: #2f2710;
+  /* book cloth: one colour per vertical, in the order the verticals are listed. Notebook covers only, never for status. */
+  --cloth-1: #3f5f6b; --cloth-2: #72804a; --cloth-3: #b06a3b; --cloth-4: #7a567f; --cloth-5: #8a6d3b; --cloth-6: #55618a; --cloth-7: #8c5a66; --cloth-8: #4f7a74;
+  --font: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+  --ease: cubic-bezier(.32, .72, 0, 1);      /* most movement */
+  --spring: cubic-bezier(.3, 1.3, .5, 1);    /* presses and small hovers only */
+  --fs: 15px;
+  /* textures */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .15  0 0 0 0 .13  0 0 0 0 .1  0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fleck: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .97  0 0 0 0 .94  0 0 0 0 .86  .75 0 0 0 -.3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  --mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.035' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .22 0 0 0 -.06'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  --inkmask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.4 0 0 0 2.05'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  --skyline: url(img/skyline.webp);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background-color: var(--paper); background-image: var(--grain); color: var(--ink); font: 400 var(--fs)/1.45 var(--font); letter-spacing: -.011em; -webkit-font-smoothing: antialiased; accent-color: var(--blue); }
+button, input, select, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
+button { cursor: pointer; }
+a { color: var(--blue); text-decoration: none; font-weight: 500; }
+a:hover { text-decoration: underline; }
+::selection { background: color-mix(in srgb, var(--yellow) 45%, transparent); }
+:focus-visible { outline: 2.5px solid color-mix(in srgb, var(--blue) 55%, transparent); outline-offset: 2px; }
+.mono { font-family: var(--mono); font-size: .88em; letter-spacing: -.02em; }
+.muted { color: var(--ink-2); }
+
+/* ---------- printed ink: add class "inked" and set --c to an ink ---------- */
+.inked { --c: var(--blue); background-color: var(--c); background-image: var(--fleck), var(--mottle); color: var(--on-ink); }
+.inked.red { --c: var(--red); } .inked.blue { --c: var(--blue); } .inked.green { --c: var(--green); } .inked.plum { --c: var(--plum); }
+.inked.yellow { --c: var(--yellow); color: var(--on-yellow); }
+
+/* ---------- frame: sidebar + page ---------- */
+.app { height: 100dvh; display: flex; }
+.side { width: 256px; flex: none; padding: 16px 12px 10px; display: flex; flex-direction: column; overflow: auto; position: relative; z-index: 3;
+  background-color: var(--side); background-image: var(--grain), linear-gradient(180deg, rgba(255,255,255,.3), transparent 30%); box-shadow: 1px 0 0 var(--hair), 14px 0 30px -22px rgba(60,50,30,.45); }
+.brand { display: flex; align-items: center; gap: 10px; padding: 2px 4px 14px 8px; font-weight: 700; font-size: 16px; letter-spacing: -.02em; white-space: nowrap; }
+.brand img { width: 36px; height: 36px; object-fit: contain; margin: -4px -2px -4px -4px; }
+.nav { position: relative; display: flex; flex-direction: column; gap: 2px; }
+.navpill { position: absolute; left: 0; right: 0; top: 0; height: 37px; border-radius: 11px; background: var(--sheet-hi); box-shadow: 0 0 0 1px var(--hair), 0 4px 10px -4px rgba(60,50,30,.25); transition: transform .5s var(--ease), opacity .3s; pointer-events: none; }
+.nitem { position: relative; z-index: 1; display: flex; align-items: center; gap: 11px; height: 37px; padding: 0 10px; border-radius: 10px; font-weight: 500; color: var(--ink-2); cursor: pointer; user-select: none; transition: background .15s, color .15s; }
+.nitem:hover { background: var(--wash); color: var(--ink); }
+.nitem.on { color: var(--ink); font-weight: 600; background: none; }
+.nitem .ni { --c: var(--ink-2); width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; flex: none; background-color: var(--c); background-image: var(--fleck); color: var(--on-ink); box-shadow: 0 1px 0 rgba(255,255,255,.22) inset, 0 4px 8px -5px var(--c); transition: transform .4s var(--spring); }
+.nitem .ni svg { width: 15px; height: 15px; }
+.nitem:hover .ni { transform: scale(1.08) rotate(-4deg); }
+.nitem .nm { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nitem .count { font-size: .87em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.nitem .count.hot { color: var(--on-ink); background: var(--red) var(--fleck); border-radius: 10px; min-width: 20px; height: 20px; padding: 0 6px; display: grid; place-items: center; font-weight: 600; font-size: 12px; }
+.nsep { height: 1px; background: var(--hair); margin: 10px; }
+.col { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; }
+.main { flex: 1; min-height: 0; overflow: auto; position: relative; z-index: 1; view-transition-name: main; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 44px 40px 80px; }
+.over { font-size: .87em; font-weight: 600; color: var(--ink-3); letter-spacing: .02em; }
+.title { margin: 4px 0 26px; font-size: 38px; line-height: 1.08; font-weight: 700; letter-spacing: -.035em; }
+.title > span { color: var(--ink-3); }
+.section { margin: 40px 0 12px; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+
+/* ---------- the scene behind the pages: light, drafting grid, Tamil Nadu skyline ---------- */
+.scene { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.scene .lite { position: absolute; inset: 0; background: radial-gradient(900px 520px at 86% -10%, rgba(211,164,54,.2), transparent 70%), radial-gradient(700px 420px at 4% 108%, rgba(53,89,143,.1), transparent 70%); }
+.scene .grid { position: absolute; inset: 0; background: linear-gradient(rgba(37,34,28,.05) 1px, transparent 1px) 0 0 / 32px 32px, linear-gradient(90deg, rgba(37,34,28,.05) 1px, transparent 1px) 0 0 / 32px 32px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 8%, #000 80%); mask-image: linear-gradient(180deg, transparent 8%, #000 80%); }
+.scene .sky { --h: clamp(170px, 31vh, 310px); position: absolute; left: 0; right: 0; bottom: calc(var(--h) * -.1); height: var(--h);
+  background: linear-gradient(to top, color-mix(in srgb, var(--blue) 30%, var(--paper)), color-mix(in srgb, var(--blue) 15%, var(--paper)) 70%);
+  -webkit-mask: var(--skyline) center bottom / auto 100% repeat-x; mask: var(--skyline) center bottom / auto 100% repeat-x; transition: opacity .6s var(--ease), transform .8s var(--ease); }
+.scene .sky.far { --h: clamp(220px, 41vh, 410px); background: color-mix(in srgb, var(--blue) 9%, var(--paper)); -webkit-mask-position: 38% bottom; mask-position: 38% bottom; }
+/* Browsers block the skyline mask when a page is opened straight from a folder (file://). Add class "plain" in that
+   case: the skyline is then drawn as a faint grey shadow. Pages served by an app (http) do not need it. */
+.scene.plain .sky { -webkit-mask: none; mask: none; background: var(--skyline) center bottom / auto 100% repeat-x; opacity: .13; }
+.scene.plain .sky.far { background-position: 38% bottom; opacity: .06; }
+.scene.focus .sky { opacity: 0; transform: translateY(24px); }   /* add class "focus" while someone reads or writes a document */
+.scene.focus .grid { opacity: .5; }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 12px; border: 0; background: var(--wash); color: var(--ink); white-space: nowrap; font-weight: 600; font-size: .96em; text-decoration: none; position: relative; overflow: hidden;
+  transition: transform .3s var(--spring), filter .2s, background .2s; }
+.btn:hover { background: var(--wash-2); text-decoration: none; }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn svg { width: 16px; height: 16px; }
+.btn.primary, .btn.good { --c: var(--blue); background-color: var(--c); background-image: var(--fleck), var(--mottle); color: var(--on-ink); box-shadow: 0 1px 0 rgba(255,255,255,.22) inset, 0 10px 20px -10px color-mix(in srgb, var(--c) 80%, transparent); }
+.btn.good { --c: var(--green); }
+.btn.primary:hover, .btn.good:hover { background-color: var(--c); filter: brightness(1.07); transform: translateY(-1px); }
+.btn.danger { color: var(--red); background: color-mix(in srgb, var(--red) 10%, transparent); }
+.btn.big { height: 46px; font-size: 1.03em; border-radius: 14px; padding: 0 22px; }
+.btn.sm { height: 34px; padding: 0 13px; font-size: .9em; border-radius: 11px; }
+.btn.wide { width: 100%; }
+/* hold to sign: set --p from 0 to 1 while the button is held */
+.btn.hold { user-select: none; touch-action: none; }
+.btn.hold::before { content: ''; position: absolute; inset: 0; background: rgba(251,247,236,.3); transform: scaleX(var(--p, 0)); transform-origin: left; }
+.btn.hold span { position: relative; }
+
+/* ---------- fields ---------- */
+.field { display: block; margin-top: 14px; }
+.field > span { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+.inp, .field input, .field select, .field textarea { width: 100%; padding: 10px 13px; border-radius: 12px; border: 0; background: var(--sheet-hi); outline: none; box-shadow: 0 0 0 1px var(--hair-2); transition: box-shadow .2s; }
+.inp:focus, .field input:focus, .field select:focus, .field textarea:focus { box-shadow: 0 0 0 2px var(--blue); }
+.inp::placeholder, .field input::placeholder, textarea::placeholder { color: var(--ink-3); }
+.toggle input[type=checkbox] { appearance: none; -webkit-appearance: none; width: 46px; height: 28px; border-radius: 14px; background: var(--wash-2); position: relative; cursor: pointer; transition: background .25s; margin: 0; }
+.toggle input[type=checkbox]::before { content: ''; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: var(--note); box-shadow: 0 2px 5px rgba(60,50,30,.3); transition: transform .35s var(--spring); }
+.toggle input[type=checkbox]:checked { background: var(--green) var(--fleck); }
+.toggle input[type=checkbox]:checked::before { transform: translateX(18px); }
+
+/* ---------- the sign-in page: grid + skyline behind one frosted card ----------
+   <div class="signin"><div class="frost"> … the form … </div></div>
+   "frost" is ONLY for the sign-in card. Nothing inside the app is frosted. */
+.signin { min-height: 100dvh; display: grid; place-items: center; padding: 20px; position: relative; overflow: hidden;
+  background-image: linear-gradient(180deg, rgba(37,34,28,.045), rgba(37,34,28,.015) 34%, transparent 58%); }   /* the top is a shade dimmer, very slightly */
+.signin::before { content: ''; position: absolute; left: 0; right: 0; bottom: -3vh; height: clamp(180px, 34vh, 340px); pointer-events: none;
+  background: linear-gradient(to top, color-mix(in srgb, var(--blue) 30%, var(--paper)), color-mix(in srgb, var(--blue) 14%, var(--paper)) 70%);
+  -webkit-mask: var(--skyline) center bottom / auto 100% repeat-x; mask: var(--skyline) center bottom / auto 100% repeat-x; }
+.signin::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(rgba(37,34,28,.05) 1px, transparent 1px) 0 0 / 32px 32px, linear-gradient(90deg, rgba(37,34,28,.05) 1px, transparent 1px) 0 0 / 32px 32px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 8%, #000 80%); mask-image: linear-gradient(180deg, transparent 8%, #000 80%); }
+.frost { position: relative; z-index: 1; width: 100%; max-width: 400px; border-radius: 28px; padding: 34px 32px 30px;
+  background-color: rgba(253,249,240,.22);
+  background-image: linear-gradient(135deg, rgba(255,255,255,.26), rgba(255,255,255,0) 36%, rgba(255,255,255,0) 72%, rgba(255,255,255,.1)), var(--grain), var(--grain); background-size: 100% 100%, 220px 220px, 150px 150px;
+  -webkit-backdrop-filter: blur(2px) saturate(1.3); backdrop-filter: blur(2px) saturate(1.3);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 0 0 1px rgba(255,255,255,.32), 0 0 0 1px var(--hair), 0 30px 60px -30px rgba(60,50,30,.45); }
+.frost .field input { background: rgba(249,245,235,.72); }
+.frost .field input:focus { background: var(--sheet-hi); }
+.frost h2 { font-size: 28px; font-weight: 700; letter-spacing: -.03em; margin: 0 0 4px; }
+.frost .logo { width: 76px; height: 76px; object-fit: contain; display: block; margin: -6px 0 14px -6px; }
+
+/* ---------- cards ---------- */
+.card { background: var(--sheet); border-radius: 20px; padding: 18px 20px; box-shadow: 0 0 0 1px var(--hair); }
+.hero { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 34px; align-items: center; background: var(--sheet); border-radius: 26px; padding: 30px 34px; box-shadow: 0 0 0 1px var(--hair), 0 1px 1px rgba(60,50,30,.04), 0 24px 48px -28px rgba(60,50,30,.3); }
+.hero h3 { margin: 12px 0 10px; font-size: 30px; line-height: 1.12; font-weight: 700; letter-spacing: -.03em; text-wrap: balance; }
+.hero p { margin: 0 0 18px; color: var(--ink-2); font-size: 1.07em; max-width: 52ch; }
+.kick { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--red); }
+.kick u { text-decoration: none; width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: beat 2s infinite; }
+@keyframes beat { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 45%, transparent); } 60% { box-shadow: 0 0 0 9px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+/* a stack of pages: three .pg inside .stack */
+.stack { position: relative; height: 250px; }
+.pg { position: absolute; left: 22px; right: 22px; top: 6px; bottom: 6px; background: var(--note); border-radius: 4px; box-shadow: 0 0 0 1px rgba(37,34,28,.08), 0 10px 22px -10px rgba(60,50,30,.35); padding: 20px 18px; transition: transform .6s var(--ease); transform-origin: 50% 100%; overflow: hidden; }
+.pg:nth-child(1) { transform: rotate(-5deg) translate(-10px, 4px); }
+.pg:nth-child(2) { transform: rotate(3.5deg) translate(9px, 2px); }
+.pg:nth-child(3) { transform: rotate(-.6deg); }
+.pg i { display: block; height: 4px; border-radius: 2px; background: rgba(37,34,28,.12); margin: 7px 0; }
+
+/* ---------- four inks, four numbers ---------- */
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+.tile { text-align: left; border: 0; border-radius: 20px; padding: 14px 16px; min-height: 108px; display: flex; flex-direction: column; position: relative; transition: transform .35s var(--ease), box-shadow .3s; box-shadow: 0 10px 20px -14px color-mix(in srgb, var(--c) 90%, transparent); }
+.tile:hover { transform: translateY(-3px); box-shadow: 0 18px 28px -16px color-mix(in srgb, var(--c) 90%, transparent); }
+.tile .ic { width: 32px; height: 32px; border-radius: 50%; background: rgba(251,247,236,.9); color: var(--c); display: grid; place-items: center; }
+.tile.yellow .ic { color: var(--yellow-d); }
+.tile .ic svg { width: 17px; height: 17px; }
+.tile b { position: absolute; right: 16px; top: 8px; font-size: 34px; font-weight: 700; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.tile > span:last-child { margin-top: auto; font-weight: 600; }
+
+/* ---------- the route: people a document passes, in order ---------- */
+.avatar { --h: 220; width: 30px; height: 30px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; font: 600 11.5px/1 var(--font); background: hsl(var(--h) 28% 83%); color: hsl(var(--h) 32% 28%); position: relative; }
+.route { display: flex; align-items: center; flex-wrap: wrap; row-gap: 8px; }
+.route .st { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+.route .st + .st::before { content: ''; width: 24px; height: 2px; border-radius: 2px; background: var(--hair-2); margin: 0 9px; }
+.route .st.done + .st::before { background: var(--green); }
+.route .st.now { color: var(--ink); font-weight: 600; }
+.route .st.now .avatar { box-shadow: 0 0 0 2px var(--sheet), 0 0 0 4px var(--blue); }
+.route .st.wait { opacity: .55; }
+.route .st.done .avatar::after { content: ''; position: absolute; right: -3px; bottom: -3px; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 2px var(--sheet); background: var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.300 6.200l1.800 1.800 3.500-3.900' fill='none' stroke='%23fbf7ec' stroke-width='1.600' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+
+/* ---------- documents as notebooks ----------
+   --c = the vertical's cloth colour (the cover).  --s = the status ink (the ribbon and the words underneath).
+   <div class="nb" style="--c:var(--cloth-1);--s:var(--green)"><div class="cover"><span class="spine"></span><span class="band"></span><span class="ribbon"></span>…</div><div class="cap"><em>Approved</em></div></div> */
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 30px 28px; padding: 6px 6px 12px 2px; }
+.nb { --c: var(--ink-3); cursor: pointer; display: flex; flex-direction: column; gap: 11px; min-width: 0; }
+.nb .cover { position: relative; aspect-ratio: 3 / 4; border-radius: 5px 13px 13px 5px; background-color: var(--c); background-image: var(--fleck), var(--mottle); color: var(--on-ink); transform-origin: left center;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.07), 3px 1px 0 -1px var(--note), 4px 2px 0 -1px rgba(37,34,28,.2), 6px 2px 0 -2px var(--note), 7px 3px 0 -2px rgba(37,34,28,.2), 0 18px 22px -16px rgba(60,50,30,.6);
+  transition: transform .55s var(--ease), box-shadow .45s var(--ease); }
+.nb:hover .cover { transform: perspective(900px) rotateY(-13deg) translateY(-4px); }
+.nb .spine { position: absolute; left: 0; top: 0; bottom: 0; width: 17px; border-radius: 5px 0 0 5px; background: rgba(0,0,0,.2) repeating-linear-gradient(180deg, rgba(251,247,236,.6) 0 6px, transparent 6px 13px) 8px 6px / 1.5px 100% no-repeat; box-shadow: 1px 0 0 rgba(0,0,0,.1), 2px 0 0 rgba(255,255,255,.1); }
+.nb .band { position: absolute; right: 15px; top: 0; bottom: 0; width: 7px; background: rgba(0,0,0,.22); }
+.nb .label { position: absolute; left: 29px; right: 31px; top: 13%; background: var(--note); color: var(--ink); border-radius: 4px; padding: 8px 10px 10px; box-shadow: 0 1px 2px rgba(0,0,0,.22); }
+.nb .label small { display: block; font: 500 10.5px/1.3 var(--mono); letter-spacing: -.02em; color: var(--ink-3); padding-bottom: 5px; margin-bottom: 6px; border-bottom: 1px solid var(--hair-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nb .label b { font-size: 13.5px; font-weight: 600; line-height: 1.27; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.nb .seal { position: absolute; left: 29px; bottom: 13px; width: 42px; height: 42px; border-radius: 50%; background: var(--note); display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.28); }
+.nb .seal img { width: 32px; height: 32px; object-fit: contain; }
+.nb .label small u { text-decoration: none; font-weight: 700; color: var(--c); }      /* the vertical code on the label */
+.nb .ribbon { position: absolute; right: 30px; top: -5px; width: 15px; height: 34px; background-color: var(--s, var(--ink-3)); background-image: var(--fleck); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%); filter: drop-shadow(0 2px 2px rgba(0,0,0,.28)); transition: height .4s var(--ease); }
+.nb:hover .ribbon { height: 40px; }
+.nb.draft .cover { background-color: var(--kraft); color: #4a4332; }                  /* a draft: plain kraft, no ribbon */
+.nb.draft .spine { background-color: var(--c); }                                      /* its spine still shows the vertical */
+.nb.turn .cover::after { content: ''; position: absolute; right: -5px; top: -5px; width: 14px; height: 14px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 3px var(--paper); animation: beat 2s infinite; color: var(--red); }
+.nb .cap { font-size: .87em; color: var(--ink-2); padding-left: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nb .cap em { font-style: normal; font-weight: 600; color: var(--s, var(--ink-2)); }
+.nb.yellow .cap em { color: var(--yellow-d); }                                        /* "Sent back": bright yellow ribbon, darker yellow words */
+.nb.draft .cap em { color: var(--ink-2); }
+/* the key: which colour is which vertical */
+.vkey { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: -4px 0 18px; font-size: .85em; font-weight: 500; color: var(--ink-2); }
+.vkey span { display: inline-flex; align-items: center; gap: 6px; }
+.vkey i { width: 13px; height: 13px; border-radius: 3px 5px 5px 3px; background-color: var(--c); background-image: var(--fleck); box-shadow: inset 2px 0 0 rgba(0,0,0,.2); }
+
+/* ---------- the Bin: an office wastebasket printed in ink (the drawing is in example.html) ---------- */
+.binart { width: 168px; height: 168px; flex: none; }
+.binart .ball > * { animation: drop .7s var(--ease) both; animation-delay: calc(var(--i) * 120ms); transform-box: fill-box; transform-origin: center; }
+@keyframes drop { from { opacity: 0; transform: translateY(-60px) rotate(-70deg); } }
+/* an empty line inside a box lines up with the fields around it */
+.empty-line { margin: 0; padding: 13px 16px; color: var(--yellow-d); }
+
+/* ---------- grouped list ---------- */
+.group { background: var(--sheet); border-radius: 20px; box-shadow: 0 0 0 1px var(--hair); overflow: hidden; }
+.row { --c: var(--ink-3); display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 18px; cursor: pointer; position: relative; transition: background .15s; }
+.row + .row::before { content: ''; position: absolute; left: 42px; right: 0; top: 0; height: 1px; background: var(--hair); }
+.row:hover { background: var(--sheet-hi); }
+.row .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c) var(--fleck); }
+.row b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row small { display: block; color: var(--ink-2); font-size: .9em; }
+.row time { color: var(--ink-3); font-size: .9em; }
+
+/* ---------- small parts ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 0; background: var(--wash); border-radius: 20px; padding: 6px 14px; font-size: .93em; font-weight: 500; color: var(--ink-2); cursor: pointer; user-select: none; }
+.chip:hover { background: var(--wash-2); color: var(--ink); }
+.chip.on { background: var(--ink); color: var(--sheet); }
+.pill { --c: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; color: var(--c); background: color-mix(in srgb, var(--c) 13%, transparent); }
+.pill.red { --c: var(--red); } .pill.blue { --c: var(--blue); } .pill.yellow { --c: var(--yellow-d); } .pill.green { --c: var(--green); }
+.seg { display: inline-flex; padding: 3px; border-radius: 12px; background: rgba(37,34,28,.07); gap: 2px; }
+.seg button { border: 0; background: transparent; padding: 0 14px; height: 32px; border-radius: 9px; font-weight: 500; font-size: .93em; color: var(--ink-2); }
+.seg button.on { background: var(--sheet-hi); color: var(--ink); font-weight: 600; box-shadow: 0 0 0 1px var(--hair), 0 2px 6px rgba(60,50,30,.12); }
+.callout { border-radius: 16px; padding: 13px 15px; font-size: .95em; background: var(--sheet); box-shadow: 0 0 0 1px var(--hair); }
+.callout.green { background: color-mix(in srgb, var(--green) 15%, var(--sheet)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 35%, transparent); }
+.callout.yellow { background: color-mix(in srgb, var(--yellow) 20%, var(--sheet)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--yellow) 45%, transparent); }
+
+/* ---------- sheet (a window that slides up), toast, stamp ---------- */
+.veil { position: fixed; inset: 0; background: rgba(37,34,28,.32); display: grid; place-items: center; padding: 16px; z-index: 40; animation: fade .25s both; }
+.sheet { width: 100%; max-width: 480px; background-color: var(--sheet-hi); background-image: var(--grain); border-radius: 28px; padding: 26px 26px 24px; box-shadow: 0 40px 80px -30px rgba(40,30,10,.55); animation: sheetUp .55s var(--ease) both; }
+.sheet h3 { margin: 0 0 4px; font-size: 22px; font-weight: 700; letter-spacing: -.025em; }
+.sheet p { color: var(--ink-2); margin: 0 0 8px; }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 80; background: var(--ink); color: var(--sheet); padding: 11px 18px; border-radius: 30px; font-weight: 500; box-shadow: 0 16px 34px -14px rgba(0,0,0,.5); animation: toastIn .45s var(--ease) both; }
+.stamp { display: inline-block; white-space: nowrap; font: 800 44px/1 Arial, Helvetica, sans-serif; letter-spacing: .07em; padding: .26em .44em .22em; border: .1em solid currentColor; border-radius: .2em; color: var(--green); opacity: .9; transform: rotate(-8deg);
+  -webkit-mask-image: var(--inkmask); mask-image: var(--inkmask); }
+@keyframes fade { from { opacity: 0; } }
+@keyframes sheetUp { from { transform: translateY(50px) scale(.96); opacity: 0; } }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 20px); } }
+
+/* ---------- numbers and charts (v1.3): charts are printed in ink; only a broken limit is red or yellow ---------- */
+:root { --chart-1: #3a352d; --chart-2: #6c665a; --chart-3: #8a8374; --chart-4: #a39b88; --chart-5: #cbc2ad; }
+.chart { background: var(--sheet); border-radius: 20px; box-shadow: 0 0 0 1px var(--hair); padding: 16px 18px 12px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font: 500 11.5px var(--font); fill: var(--ink-3); }
+.chart .gl { stroke: var(--hair); }
+.kcard { --c: var(--ink-3); position: relative; display: flex; flex-direction: column; gap: 6px; background: var(--sheet); border-radius: 20px; padding: 16px 18px 14px; box-shadow: 0 0 0 1px var(--hair); overflow: hidden; }
+.kcard::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c) var(--fleck); }
+.kcard.red { --c: var(--red); } .kcard.yellow { --c: var(--yellow); } .kcard.green { --c: var(--green); }
+.kcard .no { font: 500 11.5px var(--mono); color: var(--ink-3); }
+.kcard .val { font-size: 28px; font-weight: 700; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.memo { position: relative; background: var(--note); border-radius: 6px; padding: 30px 34px 26px; box-shadow: 0 0 0 1px rgba(37,34,28,.08), 0 26px 44px -30px rgba(60,50,30,.5);
+  background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgba(53,89,143,.07) 31px 32px); }
+.memo::before { content: ''; position: absolute; left: 22px; top: 0; bottom: 0; width: 1px; background: color-mix(in srgb, var(--red) 28%, transparent); }
+
+/* ---------- moving between pages: a soft slide, nothing pops ----------
+   Give the page area  view-transition-name: main  (done on .main above) and change pages inside
+   document.startViewTransition(() => { ...swap the content... }).  For "back", set  data-dir="back"  on <html>. */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-old(main) { animation: pageOut .24s cubic-bezier(.4, 0, 1, 1) both; }
+::view-transition-new(main) { animation: pageIn .46s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes pageOut { to { opacity: 0; transform: translateX(-20px); } }
+@keyframes pageIn { from { opacity: 0; transform: translateX(26px); } }
+:root[data-dir="back"]::view-transition-old(main) { animation-name: pageOutBack; }
+:root[data-dir="back"]::view-transition-new(main) { animation-name: pageInBack; }
+@keyframes pageOutBack { to { opacity: 0; transform: translateX(20px); } }
+@keyframes pageInBack { from { opacity: 0; transform: translateX(-26px); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* ---------- phones ---------- */
+@media (max-width: 1100px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 860px) {
+  .side { position: fixed; left: 0; top: 0; bottom: 0; z-index: 30; width: 280px; transform: translateX(-105%); visibility: hidden; transition: transform .45s var(--ease), visibility .45s; }
+  .side.open { transform: none; visibility: visible; box-shadow: 0 0 60px rgba(40,30,10,.35); }
+  .wrap { padding: 18px 16px 60px; }
+  .title { font-size: 30px; margin-bottom: 20px; }
+  .hero { grid-template-columns: minmax(0, 1fr); padding: 20px; gap: 14px; border-radius: 22px; }
+  .stack { height: 170px; max-width: 220px; margin: 0 auto; width: 100%; }
+  .hero h3 { font-size: 24px; }
+  .shelf { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 24px 18px; }
+}

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CUBE Image Compressor</title>
+<meta name="description" content="Make large photos smaller without losing how they look. Your images never leave your computer.">
+<link rel="icon" href="img/cube-logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="cube-design.css">
+<style>
+  .page { min-height: 100dvh; position: relative; }
+  .page > .wrap { position: relative; z-index: 1; padding-bottom: 120px; }
+  .top { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -.02em; margin-bottom: 30px; }
+  .top img { width: 36px; height: 36px; object-fit: contain; }
+  .lead { color: var(--ink-2); font-size: 1.07em; margin: -14px 0 26px; max-width: 60ch; }
+
+  /* the drop area */
+  .drop { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 40px 24px; border-radius: 26px; background: var(--sheet);
+    box-shadow: 0 0 0 1px var(--hair), 0 24px 48px -28px rgba(60,50,30,.3); transition: box-shadow .25s, background .25s; cursor: pointer; }
+  .drop.over { background: var(--sheet-hi); box-shadow: 0 0 0 2px var(--blue), 0 24px 48px -28px rgba(60,50,30,.3); }
+  .drop h3 { margin: 6px 0 0; font-size: 24px; font-weight: 700; letter-spacing: -.03em; }
+  .drop p { margin: 0 0 8px; color: var(--ink-2); }
+  .drop .ic { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; box-shadow: 0 10px 20px -10px var(--blue); }
+  .drop .ic svg { width: 28px; height: 28px; }
+  .drop.small { flex-direction: row; padding: 14px 18px; gap: 14px; text-align: left; border-radius: 20px; }
+  .drop.small h3 { font-size: 16px; margin: 0; } .drop.small p { margin: 0; font-size: .92em; }
+  .drop.small .ic { width: 40px; height: 40px; border-radius: 12px; } .drop.small .ic svg { width: 20px; height: 20px; }
+  .drop.small .btn { margin-left: auto; }
+  .private { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 14px; font-size: .9em; color: var(--ink-2); }
+  .private i { width: 8px; height: 8px; border-radius: 50%; background: var(--green) var(--fleck); }
+
+  /* settings */
+  .controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin-top: 18px; }
+  .ctl { background: var(--sheet); border-radius: 20px; padding: 16px 20px 18px; box-shadow: 0 0 0 1px var(--hair); }
+  .ctl .hd { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .ctl .hd b { font-weight: 600; }
+  .ctl .hd output { font-size: 22px; font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .ctl small { display: block; color: var(--ink-3); font-size: .87em; margin-top: 2px; min-height: 1.4em; }
+  .ctl.wide2 { grid-column: 1 / -1; }
+  .ctl.wide { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .ctl.wide b { font-weight: 600; }
+  .ctl.wide small { margin: 0; flex: 1; min-width: 180px; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; margin: 10px 0 0; cursor: pointer; }
+  input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--blue) 0 var(--v, 50%), var(--wash-2) var(--v, 50%)); }
+  input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--wash-2); }
+  input[type=range]::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--blue); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: var(--note); box-shadow: 0 0 0 1px var(--hair-2), 0 3px 8px rgba(60,50,30,.3); transition: transform .3s var(--spring); }
+  input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border: 0; border-radius: 50%; background: var(--note); box-shadow: 0 0 0 1px var(--hair-2), 0 3px 8px rgba(60,50,30,.3); }
+  input[type=range]:active::-webkit-slider-thumb { transform: scale(1.12); }
+  .ticks { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+
+  /* totals */
+  .sum { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin: 26px 0 12px; }
+  .sum h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+  .sum .tot { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .sum .tot b { color: var(--ink); }
+  .sum .acts { margin-left: auto; display: flex; gap: 10px; }
+
+  /* the list of images */
+  .list { background: var(--sheet); border-radius: 20px; box-shadow: 0 0 0 1px var(--hair); overflow: hidden; }
+  .item { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 12px 16px; position: relative; }
+  .item + .item::before { content: ''; position: absolute; left: 96px; right: 0; top: 0; height: 1px; background: var(--hair); }
+  .item .th { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: var(--sheet-hi); box-shadow: 0 0 0 1px var(--hair); cursor: zoom-in; }
+  .item .nm b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item .nm small { display: block; color: var(--ink-2); font-size: .88em; font-variant-numeric: tabular-nums; }
+  .item .sz { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .item .sz b { display: block; font-size: 1.05em; }
+  .item .sz s { color: var(--ink-3); text-decoration: line-through; font-size: .88em; margin-right: 6px; }
+  .item .acts { display: flex; gap: 6px; }
+  .iconbtn { width: 36px; height: 36px; border-radius: 11px; border: 0; background: var(--wash); display: grid; place-items: center; color: var(--ink-2); transition: background .15s, transform .3s var(--spring); }
+  .iconbtn:hover { background: var(--wash-2); color: var(--ink); } .iconbtn:active { transform: scale(.94); }
+  .iconbtn svg { width: 17px; height: 17px; }
+  .busy { color: var(--ink-3); font-size: .9em; }
+
+  /* the look-closer sheet */
+  .sheet.view { max-width: 920px; padding: 20px 20px 18px; }
+  .view .hd { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .view .hd h3 { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cmp { position: relative; border-radius: 16px; overflow: hidden; background: var(--note); box-shadow: 0 0 0 1px var(--hair); user-select: none; touch-action: none; }
+  .cmp img { display: block; width: 100%; max-height: 64vh; object-fit: contain; }
+  .cmp .before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--x, 50%)) 0 0); }
+  .cmp .before img { height: 100%; max-height: none; }
+  .cmp .bar { position: absolute; top: 0; bottom: 0; left: var(--x, 50%); width: 2px; margin-left: -1px; background: var(--note); box-shadow: 0 0 0 1px rgba(37,34,28,.25); cursor: ew-resize; }
+  .cmp .bar::after { content: ''; position: absolute; top: 50%; left: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: var(--note) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c665a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l-5 6 5 6M15 6l5 6-5 6'/%3E%3C/svg%3E") center / 20px no-repeat; box-shadow: 0 2px 8px rgba(60,50,30,.35); }
+  .cmp .tag { position: absolute; top: 10px; padding: 3px 10px; border-radius: 20px; background: rgba(37,34,28,.72); color: var(--sheet); font-size: 12.5px; font-weight: 600; }
+  .cmp .tag.l { left: 10px; } .cmp .tag.r { right: 10px; }
+  .view .foot { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .view .foot span { color: var(--ink-2); flex: 1; font-variant-numeric: tabular-nums; }
+  .zoomrow { display: flex; gap: 8px; }
+
+  [hidden] { display: none !important; }
+  @media (max-width: 720px) {
+    .controls { grid-template-columns: minmax(0, 1fr); }
+    .item { grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; padding: 12px; }
+    .item .th { width: 52px; height: 52px; }
+    .item + .item::before { left: 76px; }
+    .item .acts { grid-column: 2 / -1; }
+    .sum .acts { margin-left: 0; width: 100%; } .sum .acts .btn { flex: 1; }
+    .drop.small { flex-wrap: wrap; } .drop.small .btn { margin-left: 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="scene" aria-hidden="true"><div class="lite"></div><div class="grid"></div><div class="sky far"></div><div class="sky"></div></div>
+  <div class="wrap">
+    <div class="top"><img src="img/cube-logo.webp" alt="">CUBE Image Compressor</div>
+    <div class="over">Lighter files, same pixels</div>
+    <h1 class="title">Compress your images<span>.</span></h1>
+    <p class="lead">Add photos, pick the quality, and download lighter files. The picture keeps every pixel of its width and height. Everything happens inside your browser. Your images are never uploaded anywhere.</p>
+
+    <input type="file" id="file" accept="image/*" multiple hidden>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose images">
+      <div class="ic inked blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>
+      <h3>Drop images here</h3>
+      <p>or choose them from your computer. JPG, PNG, WebP and more. Many at once is fine.</p>
+      <button class="btn primary big" type="button" id="pick">Choose images</button>
+    </div>
+    <div class="private" id="privNote"><i></i>Private: nothing leaves this computer.</div>
+
+    <div id="work" hidden>
+      <div class="controls">
+        <div class="ctl wide2">
+          <div class="hd"><b>Quality</b><output id="qualOut">80</output></div>
+          <input type="range" id="qual" min="40" max="95" step="1" value="80" aria-label="Quality">
+          <div class="ticks"><span>Smallest file</span><span>Best look</span></div>
+          <small id="qualHint">Good balance. Most people cannot see a difference.</small>
+        </div>
+        <div class="ctl wide">
+          <b>Save as</b>
+          <div class="seg" id="fmt">
+            <button type="button" data-f="auto" class="on">Same type</button>
+            <button type="button" data-f="image/jpeg">JPG</button>
+            <button type="button" data-f="image/webp">WebP</button>
+          </div>
+          <small id="fmtHint">Photos stay JPG. PNG pictures become WebP so see-through parts are kept.</small>
+        </div>
+      </div>
+
+      <div class="sum">
+        <h2>Your images</h2>
+        <span class="tot" id="tot"></span>
+        <div class="acts">
+          <button class="btn" type="button" id="clear">Remove all</button>
+          <button class="btn primary" type="button" id="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>Download all</button>
+        </div>
+      </div>
+      <div class="list" id="list"></div>
+      <div style="margin-top:14px">
+        <div class="drop small" id="drop2" tabindex="0" role="button" aria-label="Add more images">
+          <div class="ic inked blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div><h3>Add more images</h3><p>Drop them here, or click.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const items = [];            // { id, file, name, bmp, w, h, out: {blob,url,w,h,type}, thumb, busy }
+  let seq = 0, timer = 0, runId = 0;
+  const S = { scale: 100, q: 80, fmt: 'auto' };
+
+  const kb = n => n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(n < 10240 ? 1 : 0) + ' KB' : (n / 1048576).toFixed(n < 10485760 ? 2 : 1) + ' MB';
+  const extOf = t => t === 'image/png' ? 'png' : t === 'image/webp' ? 'webp' : 'jpg';
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const toast = msg => { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); };
+
+  // ---------- adding files ----------
+  const file = $('#file');
+  const openPicker = () => file.click();
+  ['#drop', '#drop2'].forEach(sel => {
+    const el = $(sel);
+    el.addEventListener('click', openPicker);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker(); } });
+  });
+  $('#pick').addEventListener('click', e => { e.stopPropagation(); openPicker(); });
+  file.addEventListener('change', () => { addFiles(file.files); file.value = ''; });
+  let depth = 0;
+  window.addEventListener('dragenter', e => { e.preventDefault(); depth++; document.querySelectorAll('.drop').forEach(d => d.classList.add('over')); });
+  window.addEventListener('dragleave', e => { if (--depth <= 0) { depth = 0; document.querySelectorAll('.drop').forEach(d => d.classList.remove('over')); } });
+  window.addEventListener('dragover', e => e.preventDefault());
+  window.addEventListener('drop', e => { e.preventDefault(); depth = 0; document.querySelectorAll('.drop').forEach(d => d.classList.remove('over')); addFiles(e.dataTransfer.files); });
+  window.addEventListener('paste', e => { const f = [...(e.clipboardData?.files || [])]; if (f.length) addFiles(f); });
+
+  async function addFiles(list) {
+    const files = [...list].filter(f => f.type.startsWith('image/') || /\.(jpe?g|png|webp|gif|bmp|avif|heic)$/i.test(f.name));
+    if (!files.length) { toast('Those are not pictures. Choose JPG, PNG or WebP files.'); return; }
+    for (const f of files) {
+      let bmp;
+      try { bmp = await createImageBitmap(f, { imageOrientation: 'from-image' }); }
+      catch { toast(`Could not open ${f.name}. Try saving it as JPG first.`); continue; }
+      const it = { id: ++seq, file: f, name: f.name, bmp, w: bmp.width, h: bmp.height, out: null, busy: true };
+      it.thumb = URL.createObjectURL(await draw(bmp, Math.min(1, 160 / Math.max(bmp.width, bmp.height)), 'image/jpeg', .8).then(r => r.blob));
+      items.push(it);
+      render();
+      shrink(it, runId);
+    }
+  }
+
+  // ---------- the shrinking ----------
+  function canvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+  // halve step by step for a sharp, clean result on very large photos
+  async function draw(src, ratio, type, q) {
+    const tw = Math.max(1, Math.round(src.width * ratio)), th = Math.max(1, Math.round(src.height * ratio));
+    let cur = src, cw = src.width, ch = src.height;
+    while (cw / 2 > tw && ch / 2 > th) {
+      const c = canvas(Math.round(cw / 2), Math.round(ch / 2)), x = c.getContext('2d');
+      x.imageSmoothingQuality = 'high'; x.drawImage(cur, 0, 0, c.width, c.height);
+      cur = c; cw = c.width; ch = c.height;
+    }
+    const c = canvas(tw, th), x = c.getContext('2d');
+    if (type === 'image/jpeg') { x.fillStyle = '#ffffff'; x.fillRect(0, 0, tw, th); }   // JPG has no see-through parts
+    x.imageSmoothingQuality = 'high'; x.drawImage(cur, 0, 0, tw, th);
+    const blob = await new Promise(r => c.toBlob(r, type, q));
+    return { blob, w: tw, h: th, type: blob.type };
+  }
+  function targetType(it) {
+    if (S.fmt !== 'auto') return S.fmt;
+    return it.file.type === 'image/jpeg' ? 'image/jpeg' : 'image/webp';
+  }
+  async function shrink(it, run) {
+    it.busy = true; paintRow(it);
+    const type = targetType(it);
+    let r = await draw(it.bmp, S.scale / 100, type, S.q / 100);
+    if (run !== runId || !items.includes(it)) return;
+    // if our copy is not smaller at full size, keep the original file
+    if (S.scale === 100 && r.blob.size >= it.file.size && (it.file.type === type || S.fmt === 'auto')) {
+      r = { blob: it.file, w: it.w, h: it.h, type: it.file.type, kept: true };
+    }
+    if (it.out?.url) URL.revokeObjectURL(it.out.url);
+    it.out = { ...r, url: URL.createObjectURL(r.blob) };
+    it.busy = false; paintRow(it); totals();
+  }
+  function redoAll() {
+    clearTimeout(timer);
+    timer = setTimeout(() => { runId++; const run = runId; (async () => { for (const it of items) { if (run !== runId) return; await shrink(it, run); } })(); }, 180);
+  }
+
+  // ---------- the list ----------
+  const outName = it => it.name.replace(/\.[^.]+$/, '') + '-small.' + (it.out?.kept ? (it.name.split('.').pop() || 'jpg') : extOf(it.out?.type));
+  function render() {
+    $('#work').hidden = !items.length;
+    $('#drop').hidden = !!items.length;
+    $('#privNote').hidden = !!items.length;
+    const list = $('#list');
+    const have = new Set([...list.children].map(n => +n.dataset.id));
+    items.forEach(it => {
+      if (have.has(it.id)) return;
+      const row = document.createElement('div'); row.className = 'item'; row.dataset.id = it.id;
+      row.innerHTML = `<img class="th" alt="" src="${it.thumb}"><div class="nm"><b>${esc(it.name)}</b><small></small></div><div class="sz"></div>
+        <div class="acts"><button class="iconbtn" data-a="view" title="Look closer" aria-label="Look closer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+        <button class="iconbtn" data-a="get" title="Download" aria-label="Download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg></button>
+        <button class="iconbtn" data-a="del" title="Remove" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;
+      list.appendChild(row);
+    });
+    [...list.children].forEach(n => { if (!items.find(i => i.id === +n.dataset.id)) n.remove(); });
+    items.forEach(paintRow); totals();
+  }
+  function paintRow(it) {
+    const row = document.querySelector(`.item[data-id="${it.id}"]`); if (!row) return;
+    const o = it.out;
+    row.querySelector('small').textContent = o && !it.busy ? `${it.w} × ${it.h}  →  ${o.w} × ${o.h}` : `${it.w} × ${it.h}`;
+    const sz = row.querySelector('.sz');
+    if (it.busy || !o) { sz.innerHTML = '<span class="busy">Compressing…</span>'; return; }
+    const saved = Math.round((1 - o.blob.size / it.file.size) * 100);
+    const pill = o.kept ? '<span class="pill">Already small</span>' : saved > 0 ? `<span class="pill green">${saved}% smaller</span>` : `<span class="pill yellow">${-saved}% bigger</span>`;
+    sz.innerHTML = `<b><s>${kb(it.file.size)}</s>${kb(o.blob.size)}</b>${pill}`;
+  }
+  function totals() {
+    const done = items.filter(i => i.out && !i.busy);
+    const a = items.reduce((s, i) => s + i.file.size, 0), b = done.reduce((s, i) => s + i.out.blob.size, 0) + items.filter(i => !i.out || i.busy).reduce((s, i) => s + i.file.size, 0);
+    const pct = a ? Math.round((1 - b / a) * 100) : 0;
+    $('#tot').innerHTML = `${items.length} image${items.length === 1 ? '' : 's'} · ${kb(a)} → <b>${kb(b)}</b>${pct > 0 ? ` · ${pct}% smaller` : ''}`;
+    $('#all').disabled = !items.length || done.length < items.length;
+    $('#all').lastChild.textContent = items.length === 1 ? 'Download' : 'Download all';
+  }
+  function save(blob, name) {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+  $('#list').addEventListener('click', e => {
+    const b = e.target.closest('[data-a]'), th = e.target.closest('.th'); if (!b && !th) return;
+    const it = items.find(i => i.id === +e.target.closest('.item').dataset.id); if (!it) return;
+    const a = th ? 'view' : b.dataset.a;
+    if (a === 'del') { items.splice(items.indexOf(it), 1); it.bmp.close?.(); render(); }
+    else if (a === 'get' && it.out && !it.busy) save(it.out.blob, outName(it));
+    else if (a === 'view' && it.out && !it.busy) view(it);
+  });
+  $('#clear').addEventListener('click', () => { items.splice(0).forEach(i => i.bmp.close?.()); render(); });
+  $('#all').addEventListener('click', async () => {
+    if (items.length === 1) { save(items[0].out.blob, outName(items[0])); return; }
+    if (!window.JSZip) { items.forEach((it, i) => setTimeout(() => save(it.out.blob, outName(it)), i * 400)); return; }
+    const z = new JSZip(), used = new Set();
+    items.forEach(it => { let n = outName(it), k = 2; while (used.has(n)) n = n.replace(/(\.\w+)$/, `-${k++}$1`); used.add(n); z.file(n, it.out.blob); });
+    $('#all').disabled = true;
+    const blob = await z.generateAsync({ type: 'blob', compression: 'STORE' });
+    $('#all').disabled = false;
+    save(blob, 'smaller-images.zip');
+    toast(`Saved ${items.length} images in one zip file.`);
+  });
+
+  // ---------- sliders ----------
+  const paintRange = r => r.style.setProperty('--v', ((r.value - r.min) / (r.max - r.min) * 100) + '%');
+  const qual = $('#qual');
+  function hints() {
+    $('#qualOut').textContent = S.q;
+    $('#qualHint').textContent = (S.q >= 88 ? 'Very close to the original. Files stay larger.'
+      : S.q >= 72 ? 'Good balance. Most people cannot see a difference.'
+      : S.q >= 55 ? 'Clearly smaller. Fine for WhatsApp, email and websites.' : 'Smallest files. You may see blur in fine detail.')
+      + ' Width and height always stay the same.';
+  }
+  qual.addEventListener('input', () => { S.q = +qual.value; paintRange(qual); hints(); redoAll(); });
+  $('#fmt').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    $('#fmt').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    S.fmt = b.dataset.f;
+    $('#fmtHint').textContent = S.fmt === 'auto' ? 'Photos stay JPG. PNG pictures become WebP so see-through parts are kept.'
+      : S.fmt === 'image/jpeg' ? 'Opens everywhere. See-through parts become white.' : 'Usually the smallest. Opens in all modern browsers, WhatsApp and Windows.';
+    redoAll();
+  });
+  paintRange(qual); hints();
+
+  // ---------- look closer: before and after ----------
+  function view(it) {
+    const v = document.createElement('div'); v.className = 'veil';
+    v.innerHTML = `<div class="sheet view" role="dialog" aria-label="Compare">
+      <div class="hd"><h3>${esc(it.name)}</h3><button class="iconbtn" data-x aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="cmp"><img src="${it.out.url}" alt="Smaller copy"><div class="before"><img src="${URL.createObjectURL(it.file)}" alt="Original"></div><div class="bar"></div>
+        <span class="tag l">Original ${kb(it.file.size)}</span><span class="tag r">New ${kb(it.out.blob.size)}</span></div>
+      <div class="foot"><span>Drag the line to compare. ${it.out.w} × ${it.out.h} pixels.</span><button class="btn primary" data-g>Download this one</button></div></div>`;
+    document.body.appendChild(v);
+    const cmp = v.querySelector('.cmp');
+    const move = e => { const r = cmp.getBoundingClientRect(); const x = Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)); cmp.style.setProperty('--x', x + '%'); };
+    let drag = false;
+    cmp.addEventListener('pointerdown', e => { drag = true; cmp.setPointerCapture(e.pointerId); move(e); });
+    cmp.addEventListener('pointermove', e => drag && move(e));
+    cmp.addEventListener('pointerup', () => drag = false);
+    const close = () => { URL.revokeObjectURL(v.querySelector('.before img').src); v.remove(); document.removeEventListener('keydown', onKey); };
+    const onKey = e => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+    v.addEventListener('click', e => { if (e.target === v || e.target.closest('[data-x]')) close(); if (e.target.closest('[data-g]')) save(it.out.blob, outName(it)); });
+  }
+})();
+</script>
+</body>
+</html>

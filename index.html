@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CUBE Image Compressor</title>
-<meta name="description" content="Make large photos smaller without losing how they look. Your images never leave your computer.">
+<title>CUBE Compressor</title>
+<meta name="description" content="Make images and PDFs lighter without changing how they look. Your files never leave your computer.">
 <link rel="icon" href="img/cube-logo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,7 @@
   .page > .wrap { position: relative; z-index: 1; padding-bottom: 120px; }
   .top { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -.02em; margin-bottom: 30px; }
   .top img { width: 36px; height: 36px; object-fit: contain; }
-  .lead { color: var(--ink-2); font-size: 1.07em; margin: -14px 0 26px; max-width: 60ch; }
+  .lead { color: var(--ink-2); font-size: 1.07em; margin: -14px 0 26px; max-width: 62ch; }
 
   /* the drop area */
   .drop { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 40px 24px; border-radius: 26px; background: var(--sheet);
@@ -23,26 +23,25 @@
   .drop.over { background: var(--sheet-hi); box-shadow: 0 0 0 2px var(--blue), 0 24px 48px -28px rgba(60,50,30,.3); }
   .drop h3 { margin: 6px 0 0; font-size: 24px; font-weight: 700; letter-spacing: -.03em; }
   .drop p { margin: 0 0 8px; color: var(--ink-2); }
-  .drop .ic { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; box-shadow: 0 10px 20px -10px var(--blue); }
+  .drop .ics { display: flex; gap: 10px; }
+  .drop .ic { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; box-shadow: 0 10px 20px -10px var(--c); }
   .drop .ic svg { width: 28px; height: 28px; }
   .drop.small { flex-direction: row; padding: 14px 18px; gap: 14px; text-align: left; border-radius: 20px; }
   .drop.small h3 { font-size: 16px; margin: 0; } .drop.small p { margin: 0; font-size: .92em; }
   .drop.small .ic { width: 40px; height: 40px; border-radius: 12px; } .drop.small .ic svg { width: 20px; height: 20px; }
-  .drop.small .btn { margin-left: auto; }
   .private { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 14px; font-size: .9em; color: var(--ink-2); }
   .private i { width: 8px; height: 8px; border-radius: 50%; background: var(--green) var(--fleck); }
 
   /* settings */
-  .controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin-top: 18px; }
+  .controls { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 18px; }
   .ctl { background: var(--sheet); border-radius: 20px; padding: 16px 20px 18px; box-shadow: 0 0 0 1px var(--hair); }
   .ctl .hd { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
   .ctl .hd b { font-weight: 600; }
   .ctl .hd output { font-size: 22px; font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
   .ctl small { display: block; color: var(--ink-3); font-size: .87em; margin-top: 2px; min-height: 1.4em; }
-  .ctl.wide2 { grid-column: 1 / -1; }
-  .ctl.wide { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .ctl.wide b { font-weight: 600; }
-  .ctl.wide small { margin: 0; flex: 1; min-width: 180px; }
+  .ctl.row2 { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .ctl.row2 > b { font-weight: 600; min-width: 78px; }
+  .ctl.row2 small { margin: 0; flex: 1; min-width: 200px; }
   input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; margin: 10px 0 0; cursor: pointer; }
   input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--blue) 0 var(--v, 50%), var(--wash-2) var(--v, 50%)); }
   input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--wash-2); }
@@ -59,11 +58,14 @@
   .sum .tot b { color: var(--ink); }
   .sum .acts { margin-left: auto; display: flex; gap: 10px; }
 
-  /* the list of images */
+  /* the list of files */
   .list { background: var(--sheet); border-radius: 20px; box-shadow: 0 0 0 1px var(--hair); overflow: hidden; }
   .item { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 12px 16px; position: relative; }
   .item + .item::before { content: ''; position: absolute; left: 96px; right: 0; top: 0; height: 1px; background: var(--hair); }
-  .item .th { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: var(--sheet-hi); box-shadow: 0 0 0 1px var(--hair); cursor: zoom-in; }
+  .item .thw { position: relative; width: 64px; height: 64px; }
+  .item .th { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: var(--sheet-hi); box-shadow: 0 0 0 1px var(--hair); cursor: zoom-in; display: block; }
+  .item.pdf .th { object-fit: contain; object-position: top; background: var(--note); padding: 4px; }
+  .item .kind { position: absolute; left: -4px; bottom: -4px; font: 700 9.5px/1 var(--font); letter-spacing: .04em; padding: 3px 5px; border-radius: 6px; }
   .item .nm b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .item .nm small { display: block; color: var(--ink-2); font-size: .88em; font-variant-numeric: tabular-nums; }
   .item .sz { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -72,14 +74,16 @@
   .item .acts { display: flex; gap: 6px; }
   .iconbtn { width: 36px; height: 36px; border-radius: 11px; border: 0; background: var(--wash); display: grid; place-items: center; color: var(--ink-2); transition: background .15s, transform .3s var(--spring); }
   .iconbtn:hover { background: var(--wash-2); color: var(--ink); } .iconbtn:active { transform: scale(.94); }
+  .iconbtn:disabled { opacity: .4; cursor: default; }
   .iconbtn svg { width: 17px; height: 17px; }
   .busy { color: var(--ink-3); font-size: .9em; }
+  .err { color: var(--red); font-size: .9em; white-space: normal; max-width: 220px; display: block; }
 
   /* the look-closer sheet */
   .sheet.view { max-width: 920px; padding: 20px 20px 18px; }
   .view .hd { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
   .view .hd h3 { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cmp { position: relative; border-radius: 16px; overflow: hidden; background: var(--note); box-shadow: 0 0 0 1px var(--hair); user-select: none; touch-action: none; }
+  .cmp { position: relative; border-radius: 16px; overflow: hidden; background: var(--note); box-shadow: 0 0 0 1px var(--hair); user-select: none; touch-action: none; min-height: 200px; }
   .cmp img { display: block; width: 100%; max-height: 64vh; object-fit: contain; }
   .cmp .before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--x, 50%)) 0 0); }
   .cmp .before img { height: 100%; max-height: none; }
@@ -87,19 +91,18 @@
   .cmp .bar::after { content: ''; position: absolute; top: 50%; left: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: var(--note) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c665a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l-5 6 5 6M15 6l5 6-5 6'/%3E%3C/svg%3E") center / 20px no-repeat; box-shadow: 0 2px 8px rgba(60,50,30,.35); }
   .cmp .tag { position: absolute; top: 10px; padding: 3px 10px; border-radius: 20px; background: rgba(37,34,28,.72); color: var(--sheet); font-size: 12.5px; font-weight: 600; }
   .cmp .tag.l { left: 10px; } .cmp .tag.r { right: 10px; }
+  .cmp .wait { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-3); }
   .view .foot { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
   .view .foot span { color: var(--ink-2); flex: 1; font-variant-numeric: tabular-nums; }
-  .zoomrow { display: flex; gap: 8px; }
 
   [hidden] { display: none !important; }
   @media (max-width: 720px) {
-    .controls { grid-template-columns: minmax(0, 1fr); }
     .item { grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; padding: 12px; }
-    .item .th { width: 52px; height: 52px; }
+    .item .thw, .item .th { width: 52px; height: 52px; }
     .item + .item::before { left: 76px; }
     .item .acts { grid-column: 2 / -1; }
     .sum .acts { margin-left: 0; width: 100%; } .sum .acts .btn { flex: 1; }
-    .drop.small { flex-wrap: wrap; } .drop.small .btn { margin-left: 0; width: 100%; }
+    .drop.small { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -107,41 +110,52 @@
 <div class="page">
   <div class="scene" aria-hidden="true"><div class="lite"></div><div class="grid"></div><div class="sky far"></div><div class="sky"></div></div>
   <div class="wrap">
-    <div class="top"><img src="img/cube-logo.webp" alt="">CUBE Image Compressor</div>
+    <div class="top"><img src="img/cube-logo.webp" alt="">CUBE Compressor</div>
     <div class="over">Lighter files, same pixels</div>
-    <h1 class="title">Compress your images<span>.</span></h1>
-    <p class="lead">Add photos, pick the quality, and download lighter files. The picture keeps every pixel of its width and height. Everything happens inside your browser. Your images are never uploaded anywhere.</p>
+    <h1 class="title">Compress images and PDFs<span>.</span></h1>
+    <p class="lead">Add photos or PDFs, pick the quality, and download lighter files. Pictures keep every pixel of their width and height. Everything happens inside your browser. Your files are never uploaded anywhere.</p>
 
-    <input type="file" id="file" accept="image/*" multiple hidden>
-    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose images">
-      <div class="ic inked blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>
-      <h3>Drop images here</h3>
-      <p>or choose them from your computer. JPG, PNG, WebP and more. Many at once is fine.</p>
-      <button class="btn primary big" type="button" id="pick">Choose images</button>
+    <input type="file" id="file" accept="image/*,application/pdf,.pdf" multiple hidden>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose images or PDFs">
+      <div class="ics">
+        <div class="ic inked blue" style="--c:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>
+        <div class="ic inked plum" style="--c:var(--plum)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div>
+      </div>
+      <h3>Drop images or PDFs here</h3>
+      <p>or choose them from your computer. JPG, PNG, WebP and PDF. Many at once is fine.</p>
+      <button class="btn primary big" type="button" id="pick">Choose files</button>
     </div>
     <div class="private" id="privNote"><i></i>Private: nothing leaves this computer.</div>
 
     <div id="work" hidden>
       <div class="controls">
-        <div class="ctl wide2">
+        <div class="ctl">
           <div class="hd"><b>Quality</b><output id="qualOut">80</output></div>
           <input type="range" id="qual" min="40" max="95" step="1" value="80" aria-label="Quality">
           <div class="ticks"><span>Smallest file</span><span>Best look</span></div>
-          <small id="qualHint">Good balance. Most people cannot see a difference.</small>
+          <small id="qualHint"></small>
         </div>
-        <div class="ctl wide">
-          <b>Save as</b>
+        <div class="ctl row2" id="imgCtl">
+          <b>Images</b>
           <div class="seg" id="fmt">
             <button type="button" data-f="auto" class="on">Same type</button>
             <button type="button" data-f="image/jpeg">JPG</button>
             <button type="button" data-f="image/webp">WebP</button>
           </div>
-          <small id="fmtHint">Photos stay JPG. PNG pictures become WebP so see-through parts are kept.</small>
+          <small id="fmtHint"></small>
+        </div>
+        <div class="ctl row2" id="pdfCtl">
+          <b>PDFs</b>
+          <div class="seg" id="pmode">
+            <button type="button" data-m="keep" class="on">Keep text</button>
+            <button type="button" data-m="scan">Scanned pages</button>
+          </div>
+          <small id="pmodeHint"></small>
         </div>
       </div>
 
       <div class="sum">
-        <h2>Your images</h2>
+        <h2>Your files</h2>
         <span class="tot" id="tot"></span>
         <div class="acts">
           <button class="btn" type="button" id="clear">Remove all</button>
@@ -150,9 +164,9 @@
       </div>
       <div class="list" id="list"></div>
       <div style="margin-top:14px">
-        <div class="drop small" id="drop2" tabindex="0" role="button" aria-label="Add more images">
-          <div class="ic inked blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
-          <div><h3>Add more images</h3><p>Drop them here, or click.</p></div>
+        <div class="drop small" id="drop2" tabindex="0" role="button" aria-label="Add more files">
+          <div class="ic inked blue" style="--c:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div><h3>Add more files</h3><p>Drop images or PDFs here, or click.</p></div>
         </div>
       </div>
     </div>
@@ -163,14 +177,30 @@
 <script>
 (() => {
   const $ = s => document.querySelector(s);
-  const items = [];            // { id, file, name, bmp, w, h, out: {blob,url,w,h,type}, thumb, busy }
+  const items = [];
   let seq = 0, timer = 0, runId = 0;
-  const S = { scale: 100, q: 80, fmt: 'auto' };
+  const S = { q: 80, fmt: 'auto', pmode: 'keep', dpi: 150 };
 
   const kb = n => n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(n < 10240 ? 1 : 0) + ' KB' : (n / 1048576).toFixed(n < 10485760 ? 2 : 1) + ' MB';
-  const extOf = t => t === 'image/png' ? 'png' : t === 'image/webp' ? 'webp' : 'jpg';
+  const extOf = t => t === 'image/png' ? 'png' : t === 'image/webp' ? 'webp' : t === 'application/pdf' ? 'pdf' : 'jpg';
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const toast = msg => { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); };
+  const toast = msg => { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3600); };
+  const isPdf = f => f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+  const tick = () => new Promise(r => setTimeout(r));
+
+  // ---------- PDF tools, loaded only when a PDF is added ----------
+  const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/';
+  const loadScript = src => new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => bad(new Error('load')); document.head.appendChild(s); });
+  let pdfLibs = null;
+  function pdfTools() {
+    pdfLibs ||= Promise.all([
+      loadScript(CDN + 'pdf-lib/1.17.1/pdf-lib.min.js'),
+      loadScript(CDN + 'pako/2.1.0/pako.min.js'),
+      loadScript(CDN + 'pdf.js/3.11.174/pdf.min.js'),
+    ]).then(() => { pdfjsLib.GlobalWorkerOptions.workerSrc = CDN + 'pdf.js/3.11.174/pdf.worker.min.js'; })
+      .catch(e => { pdfLibs = null; throw e; });
+    return pdfLibs;
+  }
 
   // ---------- adding files ----------
   const file = $('#file');
@@ -183,103 +213,260 @@
   $('#pick').addEventListener('click', e => { e.stopPropagation(); openPicker(); });
   file.addEventListener('change', () => { addFiles(file.files); file.value = ''; });
   let depth = 0;
-  window.addEventListener('dragenter', e => { e.preventDefault(); depth++; document.querySelectorAll('.drop').forEach(d => d.classList.add('over')); });
-  window.addEventListener('dragleave', e => { if (--depth <= 0) { depth = 0; document.querySelectorAll('.drop').forEach(d => d.classList.remove('over')); } });
+  const dropOn = on => document.querySelectorAll('.drop').forEach(d => d.classList.toggle('over', on));
+  window.addEventListener('dragenter', e => { e.preventDefault(); depth++; dropOn(true); });
+  window.addEventListener('dragleave', () => { if (--depth <= 0) { depth = 0; dropOn(false); } });
   window.addEventListener('dragover', e => e.preventDefault());
-  window.addEventListener('drop', e => { e.preventDefault(); depth = 0; document.querySelectorAll('.drop').forEach(d => d.classList.remove('over')); addFiles(e.dataTransfer.files); });
+  window.addEventListener('drop', e => { e.preventDefault(); depth = 0; dropOn(false); addFiles(e.dataTransfer.files); });
   window.addEventListener('paste', e => { const f = [...(e.clipboardData?.files || [])]; if (f.length) addFiles(f); });
 
   async function addFiles(list) {
-    const files = [...list].filter(f => f.type.startsWith('image/') || /\.(jpe?g|png|webp|gif|bmp|avif|heic)$/i.test(f.name));
-    if (!files.length) { toast('Those are not pictures. Choose JPG, PNG or WebP files.'); return; }
+    const files = [...list].filter(f => isPdf(f) || f.type.startsWith('image/') || /\.(jpe?g|png|webp|gif|bmp|avif)$/i.test(f.name));
+    if (!files.length) { toast('Choose pictures (JPG, PNG, WebP) or PDF files.'); return; }
     for (const f of files) {
-      let bmp;
-      try { bmp = await createImageBitmap(f, { imageOrientation: 'from-image' }); }
-      catch { toast(`Could not open ${f.name}. Try saving it as JPG first.`); continue; }
-      const it = { id: ++seq, file: f, name: f.name, bmp, w: bmp.width, h: bmp.height, out: null, busy: true };
-      it.thumb = URL.createObjectURL(await draw(bmp, Math.min(1, 160 / Math.max(bmp.width, bmp.height)), 'image/jpeg', .8).then(r => r.blob));
-      items.push(it);
-      render();
-      shrink(it, runId);
+      if (isPdf(f)) await addPdf(f); else await addImage(f);
     }
   }
+  async function addImage(f) {
+    let bmp;
+    try { bmp = await createImageBitmap(f, { imageOrientation: 'from-image' }); }
+    catch { toast(`Could not open ${f.name}. Try saving it as JPG first.`); return; }
+    const it = { id: ++seq, kind: 'img', file: f, name: f.name, bmp, w: bmp.width, h: bmp.height, out: null, busy: true };
+    it.thumb = URL.createObjectURL((await draw(bmp, Math.min(1, 160 / Math.max(bmp.width, bmp.height)), 'image/jpeg', .8)).blob);
+    items.push(it); render(); shrink(it, runId);
+  }
+  async function addPdf(f) {
+    const it = { id: ++seq, kind: 'pdf', file: f, name: f.name, out: null, busy: true, pages: 0, thumb: '' };
+    items.push(it); render();
+    try {
+      await pdfTools();
+      it.bytes = new Uint8Array(await f.arrayBuffer());
+      const doc = await pdfjsLib.getDocument({ data: it.bytes.slice() }).promise;
+      it.pages = doc.numPages;
+      it.thumb = URL.createObjectURL(await renderPage(doc, 1, 140 / 72 / 2));
+      doc.destroy();
+      const img = document.querySelector(`.item[data-id="${it.id}"] .th`); if (img) img.src = it.thumb;
+    } catch (e) {
+      it.busy = false;
+      it.error = e.name === 'PasswordException' ? 'This PDF is locked with a password. Open it, save a copy without the password, then try again.'
+        : e.message === 'load' ? 'Could not load the PDF tools. Check the internet connection and try again.' : 'Could not read this PDF.';
+      paintRow(it); totals(); return;
+    }
+    shrink(it, runId);
+  }
 
-  // ---------- the shrinking ----------
+  // ---------- images ----------
   function canvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
-  // halve step by step for a sharp, clean result on very large photos
   async function draw(src, ratio, type, q) {
     const tw = Math.max(1, Math.round(src.width * ratio)), th = Math.max(1, Math.round(src.height * ratio));
     let cur = src, cw = src.width, ch = src.height;
-    while (cw / 2 > tw && ch / 2 > th) {
+    while (cw / 2 > tw && ch / 2 > th) {          // halve step by step for a clean small preview
       const c = canvas(Math.round(cw / 2), Math.round(ch / 2)), x = c.getContext('2d');
       x.imageSmoothingQuality = 'high'; x.drawImage(cur, 0, 0, c.width, c.height);
       cur = c; cw = c.width; ch = c.height;
     }
     const c = canvas(tw, th), x = c.getContext('2d');
-    if (type === 'image/jpeg') { x.fillStyle = '#ffffff'; x.fillRect(0, 0, tw, th); }   // JPG has no see-through parts
+    if (type === 'image/jpeg') { x.fillStyle = '#ffffff'; x.fillRect(0, 0, tw, th); }
     x.imageSmoothingQuality = 'high'; x.drawImage(cur, 0, 0, tw, th);
     const blob = await new Promise(r => c.toBlob(r, type, q));
     return { blob, w: tw, h: th, type: blob.type };
   }
-  function targetType(it) {
-    if (S.fmt !== 'auto') return S.fmt;
-    return it.file.type === 'image/jpeg' ? 'image/jpeg' : 'image/webp';
+  const imgType = it => S.fmt !== 'auto' ? S.fmt : it.file.type === 'image/jpeg' ? 'image/jpeg' : 'image/webp';
+  async function shrinkImage(it) {
+    const type = imgType(it);
+    const r = await draw(it.bmp, 1, type, S.q / 100);
+    if (r.blob.size >= it.file.size && (it.file.type === type || S.fmt === 'auto')) return { blob: it.file, w: it.w, h: it.h, type: it.file.type, kept: true };
+    return r;
   }
-  async function shrink(it, run) {
-    it.busy = true; paintRow(it);
-    const type = targetType(it);
-    let r = await draw(it.bmp, S.scale / 100, type, S.q / 100);
-    if (run !== runId || !items.includes(it)) return;
-    // if our copy is not smaller at full size, keep the original file
-    if (S.scale === 100 && r.blob.size >= it.file.size && (it.file.type === type || S.fmt === 'auto')) {
-      r = { blob: it.file, w: it.w, h: it.h, type: it.file.type, kept: true };
+
+  // ---------- PDFs ----------
+  async function renderPage(doc, n, scale, type = 'image/jpeg', q = .85) {
+    const page = await doc.getPage(n);
+    const vp = page.getViewport({ scale });
+    const c = canvas(Math.ceil(vp.width), Math.ceil(vp.height)), x = c.getContext('2d');
+    x.fillStyle = '#ffffff'; x.fillRect(0, 0, c.width, c.height);
+    await page.render({ canvasContext: x, viewport: vp, intent: 'print' }).promise;   // 'print' does not wait for screen repaints, so it also works in a background tab
+    page.cleanup();
+    return new Promise(r => c.toBlob(r, type, q));
+  }
+
+  // undo PNG-style row filters that PDFs often use on pictures
+  function unpredict(data, colors, columns) {
+    const bpr = colors * columns, rows = Math.floor(data.length / (bpr + 1)), out = new Uint8Array(rows * bpr);
+    for (let y = 0; y < rows; y++) {
+      const f = data[y * (bpr + 1)], src = y * (bpr + 1) + 1, o = y * bpr, p = o - bpr;
+      for (let i = 0; i < bpr; i++) {
+        const raw = data[src + i], a = i >= colors ? out[o + i - colors] : 0, b = y ? out[p + i] : 0, c = y && i >= colors ? out[p + i - colors] : 0;
+        let v;
+        if (f === 0) v = raw; else if (f === 1) v = raw + a; else if (f === 2) v = raw + b; else if (f === 3) v = raw + ((a + b) >> 1);
+        else { const pa = Math.abs(b - c), pb = Math.abs(a - c), pc = Math.abs(a + b - 2 * c); v = raw + (pa <= pb && pa <= pc ? a : pb <= pc ? b : c); }
+        out[o + i] = v & 255;
+      }
     }
+    return out;
+  }
+
+  // "Keep text": make each picture inside the PDF lighter, leave text and drawings as they are
+  async function shrinkPdfKeep(it, run) {
+    const { PDFDocument, PDFName, PDFRawStream, PDFArray, PDFNumber } = PDFLib;
+    const doc = await PDFDocument.load(it.bytes, { updateMetadata: false });
+    const ctx = doc.context, N = s => PDFName.of(s);
+    const q = S.q / 100;
+    let done = 0;
+    const objs = ctx.enumerateIndirectObjects();
+    for (const [ref, obj] of objs) {
+      if (run !== runId) return null;
+      if (!(obj instanceof PDFRawStream)) continue;
+      const d = obj.dict;
+      if (d.get(N('Subtype')) !== N('Image') || d.get(N('ImageMask'))) continue;
+      if (obj.contents.length < 12000) continue;                       // tiny pictures are not worth it
+      let filter = d.get(N('Filter'));
+      if (filter instanceof PDFArray) { if (filter.size() !== 1) continue; filter = filter.get(0); }
+      const w = ctx.lookup(d.get(N('Width')))?.asNumber?.(), h = ctx.lookup(d.get(N('Height')))?.asNumber?.();
+      const bpc = ctx.lookup(d.get(N('BitsPerComponent')))?.asNumber?.() ?? 8;
+      if (!w || !h || d.get(N('Decode'))) continue;
+      // work out the colours: grey (1) or RGB (3); skip anything else (CMYK, palettes, special inks)
+      let cs = ctx.lookup(d.get(N('ColorSpace'))), comps = 0;
+      if (cs === N('DeviceRGB') || cs === N('CalRGB')) comps = 3;
+      else if (cs === N('DeviceGray') || cs === N('CalGray')) comps = 1;
+      else if (cs instanceof PDFArray && cs.get(0) === N('ICCBased')) { const n = ctx.lookup(cs.get(1))?.dict?.get(N('N')); comps = n instanceof PDFNumber ? n.asNumber() : 0; if (comps !== 1 && comps !== 3) comps = 0; }
+      if (!comps) continue;
+      let bmp;
+      try {
+        if (filter === N('DCTDecode')) {
+          bmp = await createImageBitmap(new Blob([obj.contents], { type: 'image/jpeg' }));
+        } else if (filter === N('FlateDecode') && bpc === 8) {
+          let raw = pako.inflate(obj.contents);
+          const parms = ctx.lookup(d.get(N('DecodeParms')));
+          const pred = parms?.get?.(N('Predictor'))?.asNumber?.() ?? 1;
+          if (pred >= 10) raw = unpredict(raw, comps, w); else if (pred !== 1) continue;
+          if (raw.length < w * h * comps) continue;
+          const rgba = new Uint8ClampedArray(w * h * 4);
+          for (let i = 0, j = 0; i < w * h; i++, j += comps) {
+            const k = i * 4;
+            if (comps === 3) { rgba[k] = raw[j]; rgba[k + 1] = raw[j + 1]; rgba[k + 2] = raw[j + 2]; } else { rgba[k] = rgba[k + 1] = rgba[k + 2] = raw[j]; }
+            rgba[k + 3] = 255;
+          }
+          bmp = await createImageBitmap(new ImageData(rgba, w, h));
+        } else continue;
+      } catch { continue; }
+      if (bmp.width !== w || bmp.height !== h) { bmp.close(); continue; }
+      const c = canvas(w, h), x = c.getContext('2d');
+      x.drawImage(bmp, 0, 0); bmp.close();
+      let jpg;
+      if (comps === 1) {                                                  // keep grey pictures grey (smaller)
+        const px = x.getImageData(0, 0, w, h).data, g = new Uint8ClampedArray(w * h * 4);
+        for (let i = 0; i < px.length; i += 4) { g[i] = g[i + 1] = g[i + 2] = px[i]; g[i + 3] = 255; }
+        x.putImageData(new ImageData(g, w, h), 0, 0);
+      }
+      jpg = new Uint8Array(await (await new Promise(r => c.toBlob(r, 'image/jpeg', q))).arrayBuffer());
+      if (jpg.length >= obj.contents.length * .95) continue;              // not lighter: keep the original picture
+      const nd = { Type: 'XObject', Subtype: 'Image', Width: w, Height: h, ColorSpace: 'DeviceRGB', BitsPerComponent: 8, Filter: 'DCTDecode' };
+      const sm = d.get(N('SMask')); if (sm) nd.SMask = sm;
+      const intp = d.get(N('Interpolate')); if (intp) nd.Interpolate = intp;
+      ctx.assign(ref, ctx.stream(jpg, nd));
+      done++;
+      if (done % 3 === 0) await tick();
+    }
+    const out = await doc.save({ useObjectStreams: true });
+    return { blob: new Blob([out], { type: 'application/pdf' }), note: done ? `${done} picture${done === 1 ? '' : 's'} made lighter` : 'No large pictures inside' };
+  }
+
+  // "Scanned pages": each page becomes one clear picture (best for scans and photos of paper)
+  async function shrinkPdfScan(it, run) {
+    const { PDFDocument } = PDFLib;
+    const src = await pdfjsLib.getDocument({ data: it.bytes.slice() }).promise;
+    const out = await PDFDocument.create();
+    for (let n = 1; n <= src.numPages; n++) {
+      if (run !== runId) { src.destroy(); return null; }
+      const page = await src.getPage(n), vp1 = page.getViewport({ scale: 1 });
+      const blob = await renderPage(src, n, S.dpi / 72, 'image/jpeg', S.q / 100);
+      const img = await out.embedJpg(new Uint8Array(await blob.arrayBuffer()));
+      const p = out.addPage([vp1.width, vp1.height]);
+      p.drawImage(img, { x: 0, y: 0, width: vp1.width, height: vp1.height });
+      it.progress = `Page ${n} of ${src.numPages}`; paintRow(it);
+    }
+    src.destroy();
+    const bytes = await out.save({ useObjectStreams: true });
+    return { blob: new Blob([bytes], { type: 'application/pdf' }), note: `Pages saved as pictures at ${S.dpi} dpi` };
+  }
+  async function shrinkPdf(it, run) {
+    const r = S.pmode === 'scan' ? await shrinkPdfScan(it, run) : await shrinkPdfKeep(it, run);
+    if (!r) return null;
+    if (r.blob.size >= it.file.size) return { blob: it.file, type: 'application/pdf', kept: true, note: r.note };
+    return { ...r, type: 'application/pdf' };
+  }
+
+  // ---------- running the work ----------
+  async function shrink(it, run) {
+    if (it.error) return;
+    it.busy = true; it.progress = ''; paintRow(it); totals();
+    let r;
+    try { r = it.kind === 'pdf' ? await shrinkPdf(it, run) : await shrinkImage(it); }
+    catch (e) { console.error(e); r = { blob: it.file, type: it.file.type, kept: true, note: 'Could not compress this one. The original is kept.' }; }
+    if (!r || run !== runId || !items.includes(it)) return;
     if (it.out?.url) URL.revokeObjectURL(it.out.url);
     it.out = { ...r, url: URL.createObjectURL(r.blob) };
     it.busy = false; paintRow(it); totals();
   }
-  function redoAll() {
+  function redoAll(onlyKind) {
     clearTimeout(timer);
-    timer = setTimeout(() => { runId++; const run = runId; (async () => { for (const it of items) { if (run !== runId) return; await shrink(it, run); } })(); }, 180);
+    timer = setTimeout(() => {
+      runId++; const run = runId;
+      (async () => { for (const it of items) { if (run !== runId) return; if (!onlyKind || it.kind === onlyKind) await shrink(it, run); } })();
+    }, 220);
   }
 
   // ---------- the list ----------
-  const outName = it => it.name.replace(/\.[^.]+$/, '') + '-small.' + (it.out?.kept ? (it.name.split('.').pop() || 'jpg') : extOf(it.out?.type));
+  const outName = it => {
+    const base = it.name.replace(/\.[^.]+$/, '');
+    if (it.kind === 'pdf') return base + '-small.pdf';
+    return base + '-small.' + (it.out?.kept ? (it.name.split('.').pop() || 'jpg') : extOf(it.out?.type));
+  };
   function render() {
     $('#work').hidden = !items.length;
     $('#drop').hidden = !!items.length;
     $('#privNote').hidden = !!items.length;
+    $('#imgCtl').hidden = !items.some(i => i.kind === 'img');
+    $('#pdfCtl').hidden = !items.some(i => i.kind === 'pdf');
     const list = $('#list');
     const have = new Set([...list.children].map(n => +n.dataset.id));
     items.forEach(it => {
       if (have.has(it.id)) return;
-      const row = document.createElement('div'); row.className = 'item'; row.dataset.id = it.id;
-      row.innerHTML = `<img class="th" alt="" src="${it.thumb}"><div class="nm"><b>${esc(it.name)}</b><small></small></div><div class="sz"></div>
+      const row = document.createElement('div'); row.className = 'item ' + it.kind; row.dataset.id = it.id;
+      row.innerHTML = `<div class="thw"><img class="th" alt="" src="${it.thumb || 'data:image/gif;base64,R0lGODlhAQABAAAAACw='}">${it.kind === 'pdf' ? '<span class="kind inked plum">PDF</span>' : ''}</div>
+        <div class="nm"><b>${esc(it.name)}</b><small></small></div><div class="sz"></div>
         <div class="acts"><button class="iconbtn" data-a="view" title="Look closer" aria-label="Look closer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
         <button class="iconbtn" data-a="get" title="Download" aria-label="Download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg></button>
         <button class="iconbtn" data-a="del" title="Remove" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;
       list.appendChild(row);
     });
     [...list.children].forEach(n => { if (!items.find(i => i.id === +n.dataset.id)) n.remove(); });
-    items.forEach(paintRow); totals();
+    items.forEach(paintRow); totals(); hints();
   }
   function paintRow(it) {
     const row = document.querySelector(`.item[data-id="${it.id}"]`); if (!row) return;
-    const o = it.out;
-    row.querySelector('small').textContent = o && !it.busy ? `${it.w} × ${it.h}  →  ${o.w} × ${o.h}` : `${it.w} × ${it.h}`;
+    const o = it.out, ready = o && !it.busy;
+    const info = it.kind === 'pdf'
+      ? [it.pages ? `${it.pages} page${it.pages === 1 ? '' : 's'}` : 'PDF', ready ? o.note : ''].filter(Boolean).join(' · ')
+      : (ready ? `${it.w} × ${it.h} pixels, unchanged` : `${it.w} × ${it.h} pixels`);
+    row.querySelector('small').textContent = info;
+    row.querySelectorAll('[data-a=view],[data-a=get]').forEach(b => b.disabled = !ready);
     const sz = row.querySelector('.sz');
-    if (it.busy || !o) { sz.innerHTML = '<span class="busy">Compressing…</span>'; return; }
+    if (it.error) { sz.innerHTML = `<span class="err">${esc(it.error)}</span>`; return; }
+    if (!ready) { sz.innerHTML = `<span class="busy">${it.progress || 'Compressing…'}</span>`; return; }
     const saved = Math.round((1 - o.blob.size / it.file.size) * 100);
     const pill = o.kept ? '<span class="pill">Already small</span>' : saved > 0 ? `<span class="pill green">${saved}% smaller</span>` : `<span class="pill yellow">${-saved}% bigger</span>`;
-    sz.innerHTML = `<b><s>${kb(it.file.size)}</s>${kb(o.blob.size)}</b>${pill}`;
+    sz.innerHTML = `<b>${o.kept ? '' : `<s>${kb(it.file.size)}</s>`}${kb(o.blob.size)}</b>${pill}`;
   }
   function totals() {
-    const done = items.filter(i => i.out && !i.busy);
-    const a = items.reduce((s, i) => s + i.file.size, 0), b = done.reduce((s, i) => s + i.out.blob.size, 0) + items.filter(i => !i.out || i.busy).reduce((s, i) => s + i.file.size, 0);
+    const ok = items.filter(i => !i.error);
+    const ready = ok.filter(i => i.out && !i.busy);
+    const a = ok.reduce((s, i) => s + i.file.size, 0), b = ok.reduce((s, i) => s + (i.out && !i.busy ? i.out.blob.size : i.file.size), 0);
     const pct = a ? Math.round((1 - b / a) * 100) : 0;
-    $('#tot').innerHTML = `${items.length} image${items.length === 1 ? '' : 's'} · ${kb(a)} → <b>${kb(b)}</b>${pct > 0 ? ` · ${pct}% smaller` : ''}`;
-    $('#all').disabled = !items.length || done.length < items.length;
-    $('#all').lastChild.textContent = items.length === 1 ? 'Download' : 'Download all';
+    $('#tot').innerHTML = `${items.length} file${items.length === 1 ? '' : 's'} · ${kb(a)} → <b>${kb(b)}</b>${pct > 0 ? ` · ${pct}% smaller` : ''}`;
+    $('#all').disabled = !ready.length || ready.length < ok.length;
+    $('#all').lastChild.textContent = ok.length === 1 ? 'Download' : 'Download all';
   }
   function save(blob, name) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
@@ -289,24 +476,25 @@
     const b = e.target.closest('[data-a]'), th = e.target.closest('.th'); if (!b && !th) return;
     const it = items.find(i => i.id === +e.target.closest('.item').dataset.id); if (!it) return;
     const a = th ? 'view' : b.dataset.a;
-    if (a === 'del') { items.splice(items.indexOf(it), 1); it.bmp.close?.(); render(); }
+    if (a === 'del') { items.splice(items.indexOf(it), 1); it.bmp?.close?.(); render(); }
     else if (a === 'get' && it.out && !it.busy) save(it.out.blob, outName(it));
     else if (a === 'view' && it.out && !it.busy) view(it);
   });
-  $('#clear').addEventListener('click', () => { items.splice(0).forEach(i => i.bmp.close?.()); render(); });
+  $('#clear').addEventListener('click', () => { runId++; items.splice(0).forEach(i => i.bmp?.close?.()); render(); });
   $('#all').addEventListener('click', async () => {
-    if (items.length === 1) { save(items[0].out.blob, outName(items[0])); return; }
-    if (!window.JSZip) { items.forEach((it, i) => setTimeout(() => save(it.out.blob, outName(it)), i * 400)); return; }
+    const ok = items.filter(i => !i.error && i.out);
+    if (ok.length === 1) { save(ok[0].out.blob, outName(ok[0])); return; }
+    if (!window.JSZip) { ok.forEach((it, i) => setTimeout(() => save(it.out.blob, outName(it)), i * 400)); return; }
     const z = new JSZip(), used = new Set();
-    items.forEach(it => { let n = outName(it), k = 2; while (used.has(n)) n = n.replace(/(\.\w+)$/, `-${k++}$1`); used.add(n); z.file(n, it.out.blob); });
+    ok.forEach(it => { let n = outName(it), k = 2; while (used.has(n)) n = n.replace(/(\.\w+)$/, `-${k++}$1`); used.add(n); z.file(n, it.out.blob); });
     $('#all').disabled = true;
     const blob = await z.generateAsync({ type: 'blob', compression: 'STORE' });
     $('#all').disabled = false;
-    save(blob, 'smaller-images.zip');
-    toast(`Saved ${items.length} images in one zip file.`);
+    save(blob, 'compressed-files.zip');
+    toast(`Saved ${ok.length} files in one zip file.`);
   });
 
-  // ---------- sliders ----------
+  // ---------- settings ----------
   const paintRange = r => r.style.setProperty('--v', ((r.value - r.min) / (r.max - r.min) * 100) + '%');
   const qual = $('#qual');
   function hints() {
@@ -315,37 +503,60 @@
       : S.q >= 72 ? 'Good balance. Most people cannot see a difference.'
       : S.q >= 55 ? 'Clearly smaller. Fine for WhatsApp, email and websites.' : 'Smallest files. You may see blur in fine detail.')
       + ' Width and height always stay the same.';
-  }
-  qual.addEventListener('input', () => { S.q = +qual.value; paintRange(qual); hints(); redoAll(); });
-  $('#fmt').addEventListener('click', e => {
-    const b = e.target.closest('button'); if (!b) return;
-    $('#fmt').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
-    S.fmt = b.dataset.f;
     $('#fmtHint').textContent = S.fmt === 'auto' ? 'Photos stay JPG. PNG pictures become WebP so see-through parts are kept.'
       : S.fmt === 'image/jpeg' ? 'Opens everywhere. See-through parts become white.' : 'Usually the smallest. Opens in all modern browsers, WhatsApp and Windows.';
-    redoAll();
-  });
+    $('#pmodeHint').textContent = S.pmode === 'keep'
+      ? 'Best for most PDFs. Text stays sharp and can still be selected and searched. Only the pictures inside get lighter.'
+      : `Best for scanned papers. Each page becomes one picture at ${S.dpi} dpi, sharp enough to read and print. Text can no longer be selected.`;
+  }
+  qual.addEventListener('input', () => { S.q = +qual.value; paintRange(qual); hints(); redoAll(); });
+  function segInit(sel, key, attr, kind) {
+    $(sel).addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      $(sel).querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+      S[key] = b.dataset[attr]; hints(); redoAll(kind);
+    });
+  }
+  segInit('#fmt', 'fmt', 'f', 'img');
+  segInit('#pmode', 'pmode', 'm', 'pdf');
   paintRange(qual); hints();
 
   // ---------- look closer: before and after ----------
-  function view(it) {
+  async function pdfFirstPage(bytes) {
+    const doc = await pdfjsLib.getDocument({ data: bytes }).promise;
+    const blob = await renderPage(doc, 1, 2, 'image/png');
+    doc.destroy();
+    return URL.createObjectURL(blob);
+  }
+  async function view(it) {
     const v = document.createElement('div'); v.className = 'veil';
+    const size = it.kind === 'pdf' ? `Page 1 of ${it.pages}.` : `${it.out.w} × ${it.out.h} pixels, same as before.`;
     v.innerHTML = `<div class="sheet view" role="dialog" aria-label="Compare">
       <div class="hd"><h3>${esc(it.name)}</h3><button class="iconbtn" data-x aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-      <div class="cmp"><img src="${it.out.url}" alt="Smaller copy"><div class="before"><img src="${URL.createObjectURL(it.file)}" alt="Original"></div><div class="bar"></div>
-        <span class="tag l">Original ${kb(it.file.size)}</span><span class="tag r">New ${kb(it.out.blob.size)}</span></div>
-      <div class="foot"><span>Drag the line to compare. ${it.out.w} × ${it.out.h} pixels.</span><button class="btn primary" data-g>Download this one</button></div></div>`;
+      <div class="cmp"><div class="wait">Getting the preview ready…</div></div>
+      <div class="foot"><span>Drag the line to compare. ${size}</span><button class="btn primary" data-g>Download this one</button></div></div>`;
     document.body.appendChild(v);
+    const urls = [];
+    const close = () => { urls.forEach(u => URL.revokeObjectURL(u)); v.remove(); document.removeEventListener('keydown', onKey); };
+    const onKey = e => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+    v.addEventListener('click', e => { if (e.target === v || e.target.closest('[data-x]')) close(); if (e.target.closest('[data-g]')) save(it.out.blob, outName(it)); });
+
+    let before, after;
+    if (it.kind === 'pdf') {
+      before = await pdfFirstPage(it.bytes.slice());
+      after = await pdfFirstPage(new Uint8Array(await it.out.blob.arrayBuffer()));
+      urls.push(before, after);
+    } else { before = URL.createObjectURL(it.file); after = it.out.url; urls.push(before); }
+    if (!v.isConnected) { urls.forEach(u => URL.revokeObjectURL(u)); return; }
     const cmp = v.querySelector('.cmp');
-    const move = e => { const r = cmp.getBoundingClientRect(); const x = Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)); cmp.style.setProperty('--x', x + '%'); };
+    cmp.innerHTML = `<img src="${after}" alt="Compressed copy"><div class="before"><img src="${before}" alt="Original"></div><div class="bar"></div>
+      <span class="tag l">Original ${kb(it.file.size)}</span><span class="tag r">New ${kb(it.out.blob.size)}</span>`;
+    const move = e => { const r = cmp.getBoundingClientRect(); cmp.style.setProperty('--x', Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)) + '%'); };
     let drag = false;
     cmp.addEventListener('pointerdown', e => { drag = true; cmp.setPointerCapture(e.pointerId); move(e); });
     cmp.addEventListener('pointermove', e => drag && move(e));
     cmp.addEventListener('pointerup', () => drag = false);
-    const close = () => { URL.revokeObjectURL(v.querySelector('.before img').src); v.remove(); document.removeEventListener('keydown', onKey); };
-    const onKey = e => { if (e.key === 'Escape') close(); };
-    document.addEventListener('keydown', onKey);
-    v.addEventListener('click', e => { if (e.target === v || e.target.closest('[data-x]')) close(); if (e.target.closest('[data-g]')) save(it.out.blob, outName(it)); });
   }
 })();
 </script>
